@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +32,115 @@ public class MainActivity extends ActionBarActivity {
         listCredits = new ArrayList<Integer>();
         listGrades = new ArrayList<String>();
 
+        calculate();
+
         //Use listCodes.add("ITS333"); to add a new course code
         //Use listCodes.size() to refer to the number of courses in the list
+
     }
 
-    public void buttonClicked(View v) {
+    public void addClicked(View v) {
+        Intent i = new Intent(this, CourseActivity.class);
+        startActivityForResult(i, 88);
+
+    }
+
+
+    public void showClicked(View v) {
+        Intent i = new Intent(this, CourseListActivity.class);
+
+
+
+        String alldata = "List of Courses";
+        for (int j=0; j < listCodes.size();j++){
+        alldata += String.format("\n%s (%d credits) = %s",listCodes.get(j),listCredits.get(j),listGrades.get(j));
+        }
+
+        i.putExtra("list_of_course", alldata);
+        startActivity(i);
+    }
+
+    public void resetClicked(View v) {
+
+         cr = 0;         // Credits
+         gp = 0.0;    // Grade points
+         gpa = 0.0;
+
+        listCodes = new ArrayList<String>();
+        listCredits = new ArrayList<Integer>();
+        listGrades = new ArrayList<String>();
+
+        calculate();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         // Values from child activity
+        if (requestCode == 88) {
+            if (resultCode == RESULT_OK) {
+                int a = data.getIntExtra("Credit", 0);
+                listCredits.add(a);
+                String b = data.getStringExtra("Course");
+                listCodes.add(b);
+                String c = data.getStringExtra("Grade");
+                listGrades.add(c);
+                calculate();
+              }
+
+            }
+
+        }
+
+public void calculate()
+{
+
+    cr = 0;         // Credits
+    gp = 0.0;    // Grade points
+    gpa = 0.0;
+
+    for(int i=0; i < listGrades.size(); i++) {
+        if(listGrades.get(i).equals("A")){
+            gp += 4.0*listCredits.get(i);
+        }
+        else if(listGrades.get(i).equals("B+")){
+            gp += 3.5*listCredits.get(i);
+        }
+        else if(listGrades.get(i).equals("B")){
+            gp += 3.0*listCredits.get(i);
+        }
+        else if(listGrades.get(i).equals("C+")){
+            gp += 2.5*listCredits.get(i);
+        }
+        else if(listGrades.get(i).equals("C")){
+            gp += 2.0*listCredits.get(i);
+        }
+        else if(listGrades.get(i).equals("D+")){
+            gp += 1.5*listCredits.get(i);
+        }
+        else if(listGrades.get(i).equals("D")){
+            gp += 1.0*listCredits.get(i);
+        }
+        else if(listGrades.get(i).equals("F")){
+            gp += 0.0*listCredits.get(i);
+        }
+
+        cr += listCredits.get(i);
+
     }
+
+    TextView tvGP = (TextView)findViewById(R.id.tvGP);
+    TextView tvCR = (TextView)findViewById(R.id.tvCR);
+    TextView tvGPA = (TextView)findViewById(R.id.tvGPA);
+
+
+    gpa =  gp/cr;
+
+    tvGP.setText(Double.toString(gp));
+    tvCR.setText(Double.toString(cr));
+    tvGPA.setText(Double.toString(gpa));
+
+}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
