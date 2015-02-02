@@ -71,6 +71,8 @@ public class MainActivity extends ActionBarActivity {
         listGrades = new ArrayList<String>();
 
         calculate();
+
+
     }
 
     @Override
@@ -87,7 +89,8 @@ public class MainActivity extends ActionBarActivity {
                 listGrades.add(c);
                 calculate();
               }
-
+            TextView tvGPA = (TextView)findViewById(R.id.tvGPA);
+            tvGPA.setText(0);
             }
 
         }
